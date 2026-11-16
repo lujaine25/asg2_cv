@@ -29,7 +29,20 @@ def revisits(F, every=3, gap=30, min_inliers=40):
         # Try every keyframe i at least `gap` frames before j: estimate(F[i], F[j], 'similarity').
         # Accept the pair when estimate() returns a transform with at least min_inliers inliers, and keep in
         # `best` the accepted (i, j, H, n_inliers) with the most inliers.
-        raise NotImplementedError('TODO 4.1 in loop_closure.py, revisits(): the best partner of keyframe j')
+       
+
+        for i in keyframes:
+            if j - i < gap:
+                continue
+
+            H, n_inliers, _ = estimate(F[i], F[j], 'similarity')
+
+            if n_inliers >= min_inliers:
+                candidate = (i, j, H, n_inliers)
+
+                if best is None or n_inliers > best[3]:
+                    best = candidate
+        
         # ------------------------------------------------------------ end TODO -----
         if best is not None:
             found.append(best)
@@ -62,7 +75,13 @@ def measurement_rows(k, l, H, N, corners):
         # Write T_k(p) = T_l(H(p)) at p = (x, y) as two equations, one for each coordinate. Move everything
         # to one side, so that each reads row . z = 0, and write the coefficients into rx and ry, in the
         # columns of frames k and l.
-        raise NotImplementedError('TODO 4.2 in loop_closure.py, measurement_rows(): the coefficients')
+        #raise NotImplementedError('TODO 4.2 in loop_closure.py, measurement_rows(): the coefficients')
+
+        rx[4*k:4*k+4] = [x, -y, 1, 0]
+        rx[4*l:4*l+4] = [-u, v, -1, 0]
+
+        ry[4*k:4*k+4] = [y, x, 0, 1]
+        ry[4*l:4*l+4] = [-v, -u, 0, -1]
         # ------------------------------------------------------------ end TODO -----
     return rows
 
